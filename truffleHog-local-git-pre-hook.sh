@@ -8,8 +8,7 @@ else
   if [[ "$OSTYPE" == "msys" ]]; then
       curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b ~/bin
   elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-      mkdir -p ~/.local/bin
-      curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b ~/.local/bin
+      curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b ~/bin
   elif [[ "$OSTYPE" == "darwin"* ]]; then
       curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
   else
