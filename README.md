@@ -2,39 +2,18 @@
 
 ## Introduction
 
-TruffleHog is an open-source security tool that scans code repositories to detect sensitive information, such as API keys, passwords, and private keys, which may have been accidentally committed to version control.
-This repository contains a script that automates the setup of a security measure for your Git workflow. It installs Trufflehog and configures a global pre-commit hook to automatically scan your code for potential secrets before every commit.
+TruffleHog is an open-source security tool that scans code repositories to detect sensitive information, such as API keys, passwords, and private keys, which may have been accidentally committed to version control.  
+
+This script automates the setup of a global pre-commit hook to automatically scan your code, using Trufflehog, for potential secrets *before* every commit.
 
 ## Installation
 
-This section provides steps to install TruffleHog locally and configure a Git pre-commit hook that will apply to **all your Git repositories globally**, ensuring every commit is checked for secrets.
+Run this helper script in any bash shell (Windows/Linux/Mac). 
 
-**Clone the repository containing the script and navigate into it:**
-Open your Terminal (macOS) or Git Bash (Windows), clone the `trufflehog-pre-commit-hook` repository, and then change your current directory to the cloned repository.
-
-### macOS
-
-1.  **Make the script executable:**
-    Before running, ensure the script has executable permissions:
-
-    ```
-    chmod +x truffleHog-local-git-pre-hook.sh
-    ```
-
-2.  **Run the installation script:**
-
-    ```
-    sudo truffleHog-local-git-pre-hook.sh
-    ```
-
-
-### Windows
-
-**Open Git Bash as Administrator and run the installation script:**
-
+```bash
+curl -sSL https://raw.githubusercontent.com/AmedeoV/trufflehog-pre-commit-hook/refs/heads/main/truffleHog-local-git-pre-hook.sh | bash
 ```
-truffleHog-local-git-pre-hook.sh
-```
+
 
 ## Testing the Setup
 
