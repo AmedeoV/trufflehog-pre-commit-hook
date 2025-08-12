@@ -17,21 +17,13 @@ curl -sSL https://raw.githubusercontent.com/AmedeoV/trufflehog-pre-commit-hook/r
 
 ## Testing the Setup
 
-This section outlines how to verify that TruffleHog has been correctly installed and that the global pre-commit hook is actively checking your commits.
+To test the precommit hook, you can attempt to commit a change with a fake secret. Try this in an existing git repository:
 
-### Verify TruffleHog is Running
-
-To confirm that the pre-commit hook is active and TruffleHog is being invoked, make a simple, non-sensitive commit to any of your Git repositories and you should observe a log message in your terminal indicating that `"trufflehog scanning repo" or similar output from TruffleHog, followed by a successful commit message. This confirms the hook is executing.
-
-### Test Pre-Commit Hook Blocking
-
-To verify that TruffleHog successfully blocks commits containing hardcoded secrets, add a fake hardcoded password or API key, for example:
-
-```
-password="fakePassword123"
+```bash
+echo 'password="fakePassword123"' > fake_secret.txt
 ```
 
-Attempt to commit the change. TruffleHog should detect the fake secret, and the pre-commit hook will block the commit. You will see an error message similar to:
+TruffleHog should detect the fake secret, and the pre-commit hook will block the commit. You will see an error message similar to:
 
 ```
 Found unverified result ❓
@@ -42,17 +34,17 @@ Name: Hardcoded Password
 Commit: Staged
 ```
 
-This confirms that the pre-commit hook is effectively preventing secrets from being committed. Remember to remove the fake password/key after testing.
+This confirms that the pre-commit hook is working. Remember to remove the fake password/key after testing.
 
 ### Bypassing the Pre-Commit Hook
 
-In cases where TruffleHog might flag a false positive, or if you explicitly need to bypass the pre-commit hook for a specific commit, you can use the `--no-verify` option with your `git commit` command.
+In cases where TruffleHog might flag a false positive, or if you explicitly need to bypass the pre-commit hook for a specific commit, you can use the `--no-verify` flag:
 
 ```
 git commit -m "Commit message" --no-verify
 ```
 
-Using this option will skip all pre-commit hooks, allowing the commit to proceed even if secrets are detected. Use this option with caution and only when you are certain that the changes do not contain actual sensitive information.
+Use this option with caution and only when you are certain that the changes do not contain actual sensitive information.
 
 **For Rider Users:**
 
@@ -66,18 +58,12 @@ If you are using JetBrains Rider to commit your code and wish to bypass Git comm
 
 ![rider-no-verify.png](rider-no-verify.png)
 
-## Script Design Choices
-
-This section provides more insight into the design decisions made for the TruffleHog pre-commit hook script.
+## Additional information
 
 ### Handling Unverified/Unknown Issues
 
-The pre-commit hook is configured to **fail the commit even for unverified or unknown issues** detected by TruffleHog. This decision was made to ensure a high level of security by adopting a "fail-safe" approach. The intent is to empower the committer to explicitly review any potential findings, regardless of their verification status, and decide whether it is a legitimate secret or a false positive that needs to be addressed. This prevents potentially sensitive information from being committed without explicit human review.
+The pre-commit hook is configured to **fail the commit even for unverified or unknown issues** detected by TruffleHog, as a failsafe approach. The intention is to ensure the committer reviews any findings before proceeding. 
 
-### Custom Detectors for Hardcoded Passwords
+### Trufflehog configuration
 
-The script includes **custom detectors** specifically designed to flag scenarios that might not always be caught by TruffleHog's default configuration. For instance, a connection string containing a password might not trigger a default alert.
-
-### Extensibility for Future Scenarios
-
-The framework for custom detectors is designed to be extensible. As new types of sensitive information or specific hardcoding patterns become relevant, **additional custom detectors can be easily integrated** into the script. This ensures the pre-commit hook can adapt and evolve to cover a broader range of potential secret leakage scenarios in the future.
+A trufflehog configuration file is placed at ~/custom-detectors.yml. You can modify it following the [TruffleHog documentation](https://docs.trufflesecurity.com/configuration-file-reference). This should allow adjusting the sensitivity and configuring other parameters to suit your needs. For instance, a connection string to a localhost repository might not need to trigger a default alert.
