@@ -21,6 +21,8 @@ To test the precommit hook, you can attempt to commit a change with a fake secre
 
 ```bash
 echo 'password="fakePassword123"' > fake_secret.txt
+git add fake_secret.txt
+git commit -m "Add fake secret for testing"
 ```
 
 TruffleHog should detect the fake secret, and the pre-commit hook will block the commit. You will see an error message similar to:
