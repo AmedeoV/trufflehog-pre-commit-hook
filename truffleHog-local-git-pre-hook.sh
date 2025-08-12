@@ -1,30 +1,30 @@
 #!/bin/bash
 
-OS_TYPE="$(uname -s)"
 
-# Install trufflehog using the convenience script curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
-# But on Windows install to ~/bin instead of /usr/local/bin
-# Else install it to a non admin location that's local to home. 
-
-# If msys
-if [[ "$OSTYPE" == "msys" ]]; then
-    curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b ~/bin
-elif [[ "$OS_TYPE" == "Linux" ]]; then
-    sudo curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
-elif [[ "$OS_TYPE" == "Darwin" ]]; then
-    curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+# Check if trufflehog is already installed, else use the trufflehog convenience scripts. 
+if command -v trufflehog &> /dev/null; then
+    echo "TruffleHog is already installed."
 else
-    echo "Unsupported OS type: $OS_TYPE"
-    exit 1
-fi
+  if [[ "$OSTYPE" == "msys" ]]; then
+      curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b ~/bin
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+      sudo curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+      curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+  else
+      echo "Unsupported OS type: $OS_TYPE"
+      exit 1
+  fi
+  
+  if ! command -v trufflehog &> /dev/null; then
+      echo "TruffleHog installation failed, sorry! Please check your internet connection or the installation script."
+      exit 1
+  fi
 
-if ! command -v trufflehog &> /dev/null; then
-    echo "TruffleHog installation failed, sorry! Please check your internet connection or the installation script."
-    exit 1
 fi
 
 TRUFFLEHOG_CMD=$(which trufflehog)
-echo "TruffleHog installed successfully at $TRUFFLEHOG_CMD"
+echo "TruffleHog installed at $TRUFFLEHOG_CMD"
 
 echo "Creating .git-hooks directory..."
 mkdir -p ~/.git-hooks
