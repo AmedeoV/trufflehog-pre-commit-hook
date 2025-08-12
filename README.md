@@ -1,4 +1,4 @@
-# Installing TruffleHog Locally and Creating a Git Pre-Commit Hook
+# TruffleHog Local Git Pre-Commit Hook Setup
 
 ## Introduction
 
