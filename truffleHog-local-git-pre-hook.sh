@@ -1,46 +1,31 @@
 #!/bin/bash
 
-OS_TYPE="$(uname -s)"
 
-# Set trufflehog command based on OS
-if [[ "$OS_TYPE" =~ MINGW|MSYS|CYGWIN ]]; then
-  TRUFFLEHOG_CMD="/usr/local/bin/trufflehog"
+# Check if trufflehog is already installed, else use the trufflehog convenience scripts. 
+if command -v trufflehog &> /dev/null; then
+    echo "TruffleHog is already installed."
 else
-  TRUFFLEHOG_CMD="trufflehog"
-fi
-
-if [[ "$OS_TYPE" =~ MINGW|MSYS|CYGWIN ]]; then
-  # Windows-specific admin check
-  net session > /dev/null 2>&1
-  if [ $? -ne 0 ]; then
-    echo "Please run Git Bash as administrator."
-    read -p "Press enter to exit"
-    exit 1
-  fi
-  INSTALL_TRUFFLEHOG="curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin"
-elif [[ "$OS_TYPE" == "Darwin" ]]; then
-  # macOS: install as invoking user, not root
-  if [ -n "$SUDO_USER" ]; then
-    INSTALL_TRUFFLEHOG="sudo -u \"$SUDO_USER\" brew install trufflehog"
+  if [[ "$OSTYPE" == "msys" ]]; then
+      curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b ~/bin
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+      curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b ~/.local/bin
+      source ~/.profile
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+      curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
   else
-    INSTALL_TRUFFLEHOG="brew install trufflehog"
+      echo "Unsupported OS type: $OS_TYPE"
+      exit 1
   fi
-elif [[ "$OS_TYPE" == "Linux" ]]; then
-  # Linux admin check
-  if [ "$EUID" -ne 0 ]; then
-    echo "Please run this script as an administrator (use sudo)."
-    read -p "Press enter to exit"
-    exit 1
+  
+  if ! command -v trufflehog &> /dev/null; then
+      echo "TruffleHog installation failed, sorry! Please check your internet connection or the installation script."
+      exit 1
   fi
-  INSTALL_TRUFFLEHOG="curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin"
-else
-  echo "Unknown OS: $OS_TYPE. Skipping setup."
-  exit 0
+
 fi
 
-echo "Installing trufflehog..."
-eval $INSTALL_TRUFFLEHOG
-echo "trufflehog installation complete."
+TRUFFLEHOG_CMD=$(which trufflehog)
+echo "TruffleHog installed at $TRUFFLEHOG_CMD"
 
 echo "Creating .git-hooks directory..."
 mkdir -p ~/.git-hooks
@@ -74,4 +59,3 @@ echo "Setting pre-commit file as executable..."
 chmod +x ~/.git-hooks/pre-commit
 echo "pre-commit file is now executable."
 echo "Script ran successfully."
-read -p "Press enter to exit"
