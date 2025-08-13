@@ -13,7 +13,7 @@ else
   elif [[ "$OSTYPE" == "darwin"* ]]; then
       curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
   else
-      echo "Unsupported OS type: $OS_TYPE"
+      echo "Unsupported OS type: $OSTYPE"
       exit 1
   fi
   
