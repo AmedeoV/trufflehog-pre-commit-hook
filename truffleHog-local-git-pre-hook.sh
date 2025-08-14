@@ -11,7 +11,7 @@ else
       curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b ~/.local/bin
       source ~/.profile
   elif [[ "$OSTYPE" == "darwin"* ]]; then
-      curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+      brew install trufflehog
   else
       echo "Unsupported OS type: $OSTYPE"
       exit 1
